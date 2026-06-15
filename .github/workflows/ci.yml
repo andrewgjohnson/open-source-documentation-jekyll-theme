@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Regenerate minified assets
+        run: npx gulp
+
+      - name: Check minified assets are up to date
+        run: |
+          MINIFIED="assets/css/stylesheet.min.css assets/css/syntax-highlighting.min.css assets/js/javascript.min.js"
+          TRACKED=$(git ls-files $MINIFIED)
+          if [ -n "$TRACKED" ] && [ -n "$(git status --porcelain $TRACKED)" ]; then
+            echo "::error::Minified assets are out of date. Run 'npx gulp' locally and commit the updated minified files before merging."
+            git diff $TRACKED
+            exit 1
+          fi
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+
+      - name: Build Jekyll site
+        run: bundle exec jekyll build
