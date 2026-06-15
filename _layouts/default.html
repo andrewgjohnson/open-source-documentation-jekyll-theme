@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<!--
+/**
+ * Open Source Documentation (Jekyll Theme)
+ *
+ * Copyright (c) 2026 Andrew G. Johnson <andrew@andrewgjohnson.com>
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+ * Software.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+ * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+ * COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ *
+ * @category  AndrewGJohnson
+ * @package   Open Source Documentation (Jekyll Theme)
+ * @author    Andrew G. Johnson <andrew@andrewgjohnson.com>
+ * @copyright 2026 Andrew G. Johnson <andrew@andrewgjohnson.com>
+ * @license   https://opensource.org/licenses/mit/ The MIT License
+ * @link      https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme
+ */
+-->
+<html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+        <title>{% if page.title %}{{ page.title }}{% else %}{{ site.title }}{% endif %}</title>
+        <meta name="description" content="{{ site.description }}">
+        <meta name="keywords" content="{% if site.keywords %}{{ site.keywords }},{% endif %}{% if page.title %}{{ page.title }},{% endif %}{% if site.title %}{{ site.title }}{% endif %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="shortcut icon" href="{{ site.favicon }}" />
+        <link rel="icon" href="{{ site.favicon }}" />
+        {% if page.canonical %}
+            <link rel="canonical" href="{{ page.canonical }}" />
+        {% endif %}
+        {% if jekyll.environment == "production" %}
+            <link rel="stylesheet" href="{{ '/assets/css/stylesheet.min.css' | prepend: site.baseurl }}?_={{ site.time | date: '%Y%m%d%H%M%S' }}" />
+        {% else %}
+            <link rel="stylesheet" href="{{ '/assets/css/stylesheet.css' | prepend: site.baseurl }}" />
+        {% endif %}
+        {% if site.cover_image_url %}
+            <style>#cover-image { background-image:url("{{ site.cover_image_url }}") }</style>
+        {% elsif site.cover_image %}
+            <style>#cover-image { background-image:url("{{ '/assets/images/cover/' | append: site.cover_image | append: '.jpg' | prepend: site.baseurl }}") }</style>
+        {% endif %}
+        {% if site.syntax_highlighting %}
+            {% if jekyll.environment == "production" %}
+                <link rel="stylesheet" href="{{ '/assets/css/syntax-highlighting.min.css' | prepend: site.baseurl }}?_={{ site.time | date: '%Y%m%d%H%M%S' }}" />
+            {% else %}
+                <link rel="stylesheet" href="{{ '/assets/css/syntax-highlighting.css' | prepend: site.baseurl }}" />
+            {% endif %}
+        {% endif %}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" />
+        {% if site.custom_head %}
+            {{ site.custom_head }}
+        {% endif %}
+    </head>
+    <body>
+        <div id="container">
+            <main>
+                {{ content }}
+            </main>
+            {% if site.social_links %}
+                <aside aria-label="Social links">
+                    <div id="aside" class="aside-{{ site.social_links | size }}">
+                        <p>Follow <strong>{{ site.name }}</strong> online</p>
+                        <ul>
+                            {% for link in site.social_links %}
+                            <li>
+                                <a href="{{ link.url }}" title="{{ link.label }}">
+                                    <span>{{ link.label }}</span>
+                                    {% case link.platform %}
+                                        {% when 'bluesky' %}<i class="fab fa-bluesky" aria-hidden="true"></i>
+                                        {% when 'codepen' %}<i class="fab fa-codepen" aria-hidden="true"></i>
+                                        {% when 'dev' %}<i class="fab fa-dev" aria-hidden="true"></i>
+                                        {% when 'discord' %}<i class="fab fa-discord" aria-hidden="true"></i>
+                                        {% when 'facebook' %}<i class="fab fa-facebook" aria-hidden="true"></i>
+                                        {% when 'github' %}<i class="fab fa-github" aria-hidden="true"></i>
+                                        {% when 'gitlab' %}<i class="fab fa-gitlab" aria-hidden="true"></i>
+                                        {% when 'instagram' %}<i class="fab fa-instagram" aria-hidden="true"></i>
+                                        {% when 'linkedin' %}<i class="fab fa-linkedin" aria-hidden="true"></i>
+                                        {% when 'mastodon' %}<i class="fab fa-mastodon" aria-hidden="true"></i>
+                                        {% when 'npm' %}<i class="fab fa-npm" aria-hidden="true"></i>
+                                        {% when 'packagist' %}<i class="fa-solid fa-box-open" aria-hidden="true"></i>
+                                        {% when 'patreon' %}<i class="fab fa-patreon" aria-hidden="true"></i>
+                                        {% when 'reddit' %}<i class="fab fa-reddit" aria-hidden="true"></i>
+                                        {% when 'slack' %}<i class="fab fa-slack" aria-hidden="true"></i>
+                                        {% when 'stackoverflow' %}<i class="fab fa-stack-overflow" aria-hidden="true"></i>
+                                        {% when 'threads' %}<i class="fab fa-threads" aria-hidden="true"></i>
+                                        {% when 'tiktok' %}<i class="fab fa-tiktok" aria-hidden="true"></i>
+                                        {% when 'twitch' %}<i class="fab fa-twitch" aria-hidden="true"></i>
+                                        {% when 'twitter' %}<i class="fab fa-twitter" aria-hidden="true"></i>
+                                        {% when 'x' %}<i class="fab fa-x-twitter" aria-hidden="true"></i>
+                                        {% when 'youtube' %}<i class="fab fa-youtube" aria-hidden="true"></i>
+                                        {% else %}<i class="fa-solid fa-link" aria-hidden="true"></i>
+                                    {% endcase %}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </aside>
+            {% endif %}
+        </div>
+        <header>
+            <div id="header">
+                <div id="header-inner">
+                    {% assign nav_pages = site.pages | where_exp: "item", "item.nav_order != nil" | sort: 'nav_order' %}
+                    <p>
+                        <a href="{{ '/' | prepend: site.baseurl }}" title="{{ site.name }}" id="wordmark">{{ site.name }}</a>
+                        {% if nav_pages.size > 0 %}
+                            {% if site.menu_url %}
+                                <a href="{{ site.menu_url | prepend: site.baseurl }}" title="Menu" id="menu-toggle" aria-expanded="false" aria-controls="nav">Menu</a>
+                            {% else %}
+                                <span title="Menu" id="menu-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="nav">Menu</span>
+                            {% endif %}
+                        {% endif %}
+                    </p>
+                    {% if nav_pages.size > 0 %}
+                        <nav aria-label="Main navigation" id="nav">
+                            <ul>
+                                {% for nav_page in nav_pages %}
+                                    <li>
+                                        <a href="{{ nav_page.url | prepend: site.baseurl }}" title="{{ nav_page.nav_text | default: nav_page.title }}">
+                                            {{ nav_page.nav_text | default: nav_page.title }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </nav>
+                    {% endif %}
+                </div>
+            </div>
+        </header>
+        <footer>
+            <div id="footer">
+                <p>
+                    {% if site.footer_url %}<a href="{{ site.footer_url }}" title="{{ site.footer_text | default: site.footer_url }}">{{ site.footer_text | default: site.footer_url }}</a>{% elsif site.footer_text %}{{ site.footer_text }} {% endif %}
+                    &#169;
+                    {% assign current_year = site.time | date: '%Y' | plus: 0 %}
+                    {% if site.copyright_year_start and site.copyright_year_start != current_year %}{{ site.copyright_year_start }}&ndash;{% endif %}{{ site.time | date: '%Y' }}
+                </p>
+            </div>
+        </footer>
+        <div id="cover-image" aria-hidden="true"></div>
+        {% if jekyll.environment == "production" %}
+            <script type="text/javascript" src="{{ '/assets/js/javascript.min.js' | prepend: site.baseurl }}?_={{ site.time | date: '%Y%m%d%H%M%S' }}"></script>
+        {% else %}
+            <script type="text/javascript" src="{{ '/assets/js/javascript.js' | prepend: site.baseurl }}"></script>
+        {% endif %}
+        {% if site.syntax_highlighting %}
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js" integrity="sha512-EBLzUL8XLl+va/zAsmXwS7Z2B1F9HUHkZwyS/VKwh3S7T/U0nF4BaU29EP/ZSf6zgiIxYAnKLu6bJ8dqpmX5uw==" crossorigin="anonymous"></script>
+            <script type="text/javascript">
+                hljs.highlightAll();
+            </script>
+        {% endif %}
+        {% if site.custom_body %}
+            {{ site.custom_body }}
+        {% endif %}
+    </body>
+</html>

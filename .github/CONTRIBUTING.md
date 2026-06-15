@@ -1,0 +1,55 @@
+# Contributing Guidelines
+
+## Contribute Code
+
+### Coding Conventions
+
+Please be consistent with what already exists. New code should not introduce errors or regressions. Before submitting a pull request, verify your changes work correctly by following the steps below.
+
+#### Javascript
+
+Javascript source lives in [`assets/js/javascript.js`](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/assets/js/javascript.js). Keep all code compatible with the existing style.
+
+#### CSS
+
+CSS source lives in [`assets/css/stylesheet.css`](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/assets/css/stylesheet.css) and [`assets/css/syntax-highlighting.css`](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/assets/css/syntax-highlighting.css). Keep all selectors consistent with the existing formatting and specificity conventions.
+
+#### Liquid / HTML
+
+The layout lives in [`_layouts/default.html`](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/assets/js/javascript.js). Keep Liquid logic minimal and ensure all new variables are documented in the [README](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/README.md).
+
+### Minified Assets
+
+Prior to committing any changes to Javascript or CSS, you must regenerate the minified assets using [gulp.js](https://gulpjs.com/). The minifier configuration is defined in [`gulpfile.js`](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/gulpfile.js). Run this command to install dependencies and generate updated minified files:
+
+    npm ci
+    npx gulp
+
+The CI pipeline will reject any pull request where the minified assets are out of sync with their sources.
+
+### Jekyll Build
+
+Verify that the Jekyll site builds without errors before submitting. Run this command if you have Ruby and Bundler installed:
+
+    bundle install
+    bundle exec jekyll build
+
+### Submitting Changes
+
+Please send a [GitHub Pull Request](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/pull/new/master) with a clear list of what you’ve done (read more about [pull requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)). Please follow our coding conventions (above) and make sure all of your commits are atomic (one feature per commit). Please use our [pull request template](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/.github/PULL_REQUEST_TEMPLATE.md) when submitting pull requests.
+
+Always write a clear log message for your commits. One-line messages are fine for small changes, but bigger changes should look like this:
+
+    $ git commit -m "A brief summary of the commit
+    >
+    > A paragraph describing what changed and its impact."
+
+## Contribute Financially
+
+You can contribute financially by becoming a [patron](https://patreon.com/agjopensource) at [patreon.com/agjopensource](https://patreon.com/agjopensource) to support this theme.
+
+[![Patreon - Become a Patron](https://raster.shields.io/badge/Patreon%20-become%20a%20Patron-FD334A.png?style=for-the-badge&logo=patreon&logoColor=FD334A)](https://patreon.com/agjopensource)
+
+## Code of Conduct
+
+In order to participate your behaviour must conform to our [code of conduct](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/master/.github/CODE_OF_CONDUCT.md).
