@@ -1,24 +1,35 @@
 (function() {
+    // The addEvent function is a cross-browser way to add event listeners to elements. It checks if the browser supports addEventListener (modern browsers) and uses it if available. If not, it falls back to attachEvent (older versions of Internet Explorer). This ensures that the event handling works across different browsers.
+    function addEvent(el, event, handler) {
+        if (el.addEventListener) {
+            el.addEventListener(event, handler);
+        } else if (el.attachEvent) {
+            el.attachEvent('on' + event, handler);
+        }
+    }
+
     // Handle menu toggle clicks
     var menuToggleElement = document.getElementById('menu-toggle');
     if (menuToggleElement !== null) {
-        menuToggleElement.addEventListener('click', function(e) {
+        addEvent(menuToggleElement, 'click', function(e) {
+            e = e || window.event;
             if (document.body.className.indexOf('menu-open') >= 0) {
-                document.body.className = document.body.className.replace(/\s*menu-open\s*/g, ' ').trim();
+                document.body.className = document.body.className.replace(/\s*menu-open\s*/g, ' ').replace(/^\s+|\s+$/g, ''); // .replace(/^\s+|\s+$/g, '') works the same as .trim() but is more widely supported by older browsers
                 menuToggleElement.setAttribute('aria-expanded', 'false');
             } else {
-                document.body.className = (document.body.className + ' menu-open').trim();
+                document.body.className = (document.body.className + ' menu-open').replace(/^\s+|\s+$/g, ''); // .replace(/^\s+|\s+$/g, '') works the same as .trim() but is more widely supported by older browsers
                 menuToggleElement.setAttribute('aria-expanded', 'true');
             }
-            e.preventDefault();
-            e.stopPropagation();
+            if (e.preventDefault) { e.preventDefault(); } else { e.returnValue = false; }
+            if (e.stopPropagation) { e.stopPropagation(); } else { e.cancelBubble = true; }
         });
 
         // <span role='button'> doesn’t synthesize click on Space like native <a>/<button> elements do
         if (menuToggleElement.tagName !== 'A') {
-            menuToggleElement.addEventListener('keydown', function(e) {
-                if (e.key === ' ' || e.key === 'Enter') {
-                    e.preventDefault();
+            addEvent(menuToggleElement, 'keydown', function(e) {
+                e = e || window.event;
+                if (e.key === ' ' || e.key === 'Enter' || e.keyCode === 32 || e.keyCode === 13) {
+                    if (e.preventDefault) { e.preventDefault(); } else { e.returnValue = false; }
                     menuToggleElement.click();
                 }
             });
@@ -26,7 +37,7 @@
     }
 
     // Inject <span class='copy-code'> elements into code blocks
-    if (document.querySelectorAll) {
+    if (document.querySelectorAll) { // Only inject the elements if the browser supports querySelectorAll (IE8+) otherwise we skip them
         document.addEventListener('DOMContentLoaded', function() {
             var codeBlocks = document.querySelectorAll('pre code');
 
