@@ -1,0 +1,161 @@
+name: Jekyll Theme Installs Badge and Report
+
+on:
+  schedule:
+    - cron: '0 * * * *' # run hourly
+  workflow_dispatch: # allow manual triggering
+
+permissions:
+  contents: write
+
+jobs:
+  fetch-jekyll-installs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Fetch jekyll theme installs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Authenticated GitHub API GET with retries. Prints the JSON body on success
+          # (HTTP 200 + valid JSON) and returns non-zero once retries are exhausted. The
+          # code search API throws transient 403/429 secondary-rate-limit and 5xx errors
+          # (sometimes with an empty/non-JSON body) under load, so a single bad response
+          # must not be mistaken for "no results". Backoff grows with each attempt.
+          api_get() {
+            local url="$1" attempt=1 max=5 resp code body
+            while [ "$attempt" -le "$max" ]; do
+              resp=$(curl -s -w $'\n%{http_code}' \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "$url")
+              code=$(printf '%s' "$resp" | tail -n1)
+              body=$(printf '%s' "$resp" | sed '$d')
+              if [ "$code" = "200" ] && printf '%s' "$body" | jq -e . > /dev/null 2>&1; then
+                printf '%s' "$body"
+                return 0
+              fi
+              echo "GitHub API $url -> HTTP $code (attempt $attempt/$max); retrying" >&2
+              sleep $((attempt * 15))
+              attempt=$((attempt + 1))
+            done
+            return 1
+          }
+
+          # The github.com website uses the regex search (per theme):
+          #   /remote_theme:\s*<theme>/ -repo:<theme>
+          # The REST code search API does not support regex, so we emulate it with two
+          # quoted exact-match tokens (AND'd together) which tolerates the whitespace the
+          # regex's \s* would have matched, and exclude the theme's own repository.
+          THEMES=(
+            "andrewgjohnson/open-source-documentation-jekyll-theme"
+          )
+
+          RESULTS=""
+          for THEME in "${THEMES[@]}"; do
+            QUERY="\"remote_theme:\" \"$THEME\" -repo:$THEME"
+            ENCODED=$(jq -rn --arg q "$QUERY" '$q|@uri')
+
+            PAGE=1
+            while true; do
+              # Abort the whole job (rather than committing a bogus zero) if the search
+              # cannot be fetched, so the previously committed report/badge are preserved.
+              if ! RESPONSE=$(api_get "https://api.github.com/search/code?q=$ENCODED&per_page=100&page=$PAGE"); then
+                echo "::error::Code search failed for $THEME after retries; aborting without overwriting the existing report."
+                exit 1
+              fi
+
+              # Exclude matches inside .github/workflows (e.g. this workflow's own
+              # search phrase) since those are not real theme usages.
+              LINES=$(echo "$RESPONSE" | jq -r --arg theme "$THEME" '.items[] | select(.path | startswith(".github/workflows/") | not) | [.repository.full_name, $theme, .html_url] | @tsv')
+              if [ -z "$LINES" ]; then
+                break
+              fi
+              RESULTS+="$LINES"$'\n'
+
+              COUNT=$(echo "$RESPONSE" | jq '.items | length')
+              if [ "$COUNT" -lt 100 ]; then
+                break
+              fi
+              PAGE=$((PAGE + 1))
+              sleep 6 # code search API is rate limited to 10 requests/minute
+            done
+          done
+
+          # Keep the first match per repository + theme pair, then sort by repo name.
+          DEDUPED=$(printf "%s" "$RESULTS" | awk -F'\t' 'NF && !seen[$1 FS $2]++' | sort -t$'\t' -k1,1)
+          TOTAL=$(printf "%s\n" "$DEDUPED" | grep -c . || true)
+
+          # Build one table per theme (in THEMES order), each preceded by an h1 that
+          # links to the theme's GitHub repo. The Project column deep-links to the line
+          # in the consumer repo that references the theme.
+          REPORT=""
+          for THEME in "${THEMES[@]}"; do
+            # Rows from the deduped set that use this theme (column 2 == theme).
+            THEME_ROWS=$(printf "%s\n" "$DEDUPED" | awk -F'\t' -v t="$THEME" '$2 == t')
+
+            REPORT+="Project|URL\n-------|---\n"
+
+            THEME_TOTAL=0
+            while IFS=$'\t' read -r REPO ROW_THEME URL; do
+              [ -z "$REPO" ] && continue
+              USERNAME=$(echo "$REPO" | cut -d'/' -f1)
+              REPO_NAME=$(echo "$REPO" | cut -d'/' -f2)
+
+              # Link the URL column to the repository's GitHub Pages site. The Pages API
+              # returns the exact published URL (html_url), which already reflects a custom
+              # domain set via a root CNAME. If Pages info is unavailable, fall back to the
+              # default *.github.io URL: a user/org site (repo named <user>.github.io) lives
+              # at the domain root, everything else under the /<repo> project path.
+              PAGES_URL=$(curl -s \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/$REPO/pages" | jq -r '.html_url // empty')
+              if [ -z "$PAGES_URL" ]; then
+                USERNAME_LC=$(echo "$USERNAME" | tr '[:upper:]' '[:lower:]')
+                REPO_NAME_LC=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')
+                if [ "$REPO_NAME_LC" = "$USERNAME_LC.github.io" ]; then
+                  PAGES_URL="https://$USERNAME_LC.github.io/"
+                else
+                  PAGES_URL="https://$USERNAME_LC.github.io/$REPO_NAME/"
+                fi
+              fi
+
+              # The code search API only gives us the blob URL, so fetch the raw file and
+              # find the matching line to deep-link to it (e.g. .../_config.yml#L7).
+              RAW_URL=$(echo "$URL" | sed -e 's#https://github.com/#https://raw.githubusercontent.com/#' -e 's#/blob/#/#')
+              LINE=$(curl -sL -H "Authorization: token $GITHUB_TOKEN" "$RAW_URL" | grep -n -m1 -E "remote_theme:[[:space:]]*$THEME" | cut -d':' -f1)
+              if [ -n "$LINE" ]; then
+                URL="$URL#L$LINE"
+              fi
+
+              REPORT+="[$USERNAME/**$REPO_NAME**]($URL)|[$PAGES_URL]($PAGES_URL)\n"
+              THEME_TOTAL=$((THEME_TOTAL + 1))
+            done <<< "$THEME_ROWS"
+
+            REPORT+="**Total installs**|**$THEME_TOTAL**\n\n"
+          done
+
+          echo -e "$REPORT" > INSTALLS.md
+
+          BADGE_URL="https://raster.shields.io/badge/installs-${TOTAL}-0969da.png?colorB=0366d6&style=flat-square&logoColor=white&logo=jekyll"
+          echo "Downloading badge from URL: $BADGE_URL"
+          curl -L "$BADGE_URL" -o installs-badge.png
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add INSTALLS.md
+          git add installs-badge.png
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "Update jekyll theme installs badge and report"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
