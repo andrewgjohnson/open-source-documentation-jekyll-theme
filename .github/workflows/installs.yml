@@ -124,8 +124,19 @@ jobs:
                 fi
               fi
 
-              # The code search API only gives us the blob URL, so fetch the raw file and
-              # find the matching line to deep-link to it (e.g. .../_config.yml#L7).
+              # The code search html_url is pinned to the indexed commit SHA
+              # (.../blob/<sha>/...). Rewrite it to the repo's default branch for a clean,
+              # live link. Fall back to the original (SHA) URL if the branch is unknown.
+              DEFAULT_BRANCH=$(curl -s \
+                -H "Authorization: token $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                "https://api.github.com/repos/$REPO" | jq -r '.default_branch // empty')
+              if [ -n "$DEFAULT_BRANCH" ]; then
+                URL=$(echo "$URL" | sed -E "s#(/blob/)[^/]+/#\1$DEFAULT_BRANCH/#")
+              fi
+
+              # Fetch the raw file at that same ref and find the matching line so the
+              # deep-link anchor (e.g. .../_config.yml#L7) matches the live content.
               RAW_URL=$(echo "$URL" | sed -e 's#https://github.com/#https://raw.githubusercontent.com/#' -e 's#/blob/#/#')
               LINE=$(curl -sL -H "Authorization: token $GITHUB_TOKEN" "$RAW_URL" | grep -n -m1 -E "remote_theme:[[:space:]]*$THEME" | cut -d':' -f1)
               if [ -n "$LINE" ]; then
