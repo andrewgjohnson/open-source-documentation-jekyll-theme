@@ -10,4 +10,3 @@ Project|URL
 [andrewgjohnson/**linebreaks4imagettftext**](https://github.com/andrewgjohnson/linebreaks4imagettftext/blob/b5751ab9de9b6f1d5f5e5dae3186cc6df5931cd5/_config.yml#L5)|[https://linebreaks4imagettftext.agjgd.org/](https://linebreaks4imagettftext.agjgd.org/)
 **Total installs**|**8**
 
-
