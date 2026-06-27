@@ -27,7 +27,7 @@ const gulp = require('gulp');
 const cleanCss = require('gulp-clean-css');
 const concat = require('gulp-concat');
 const replace = require('gulp-replace');
-const through2 = require('through2');
+const through2 = require('through2').default;
 const uglify = require('gulp-uglify');
 const postcss = require('postcss');
 
