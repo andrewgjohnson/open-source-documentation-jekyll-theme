@@ -136,7 +136,7 @@ jobs:
               THEME_TOTAL=$((THEME_TOTAL + 1))
             done <<< "$THEME_ROWS"
 
-            REPORT+="**Total installs**|**$THEME_TOTAL**\n\n"
+            REPORT+="**Total installs**|**$THEME_TOTAL**\n"
           done
 
           echo -e "$REPORT" > INSTALLS.md

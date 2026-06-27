@@ -7,6 +7,7 @@ html{color:#000;background:#FFF}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre
 
 html,body,code                                           { color:#24292e;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";font-size:16px }
 a,a code                                                 { color:#0366d6;text-decoration:none }
+a:hover                                                  { text-decoration:underline }
 strong                                                   { font-weight:bold }
 em                                                       { font-style:italic }
 strong em,em strong                                      { font-style:italic;font-weight:bold }
@@ -34,7 +35,6 @@ pre,pre code                                             { background-color:#f6f
 pre                                                      { border:0 solid #ffffff;border-width:0 10px;box-sizing:border-box;display:block;margin:10px 0 0;-moz-box-sizing:border-box;overflow-x:scroll;overflow-y:visible;padding:10px;-webkit-box-sizing:border-box;width:100% }
 hr                                                       { background-color:#eceef0;border:0;color:#eceef0;height:1px;margin:15px auto 0;padding:0;width:100% }
 hr + p,hr + ul,hr + ol                                   { padding-top:15px }
-a:hover                                                  { text-decoration:underline }
 
 div.highlight                                            { position:relative }
 span.copy-code                                           { background-color:#ffffff;background-color:rgba(255,255,255,0.67);border-radius:5px;color:#48525c;cursor:pointer;display:block;float:right;font-size:13px;-moz-border-radius:5px;padding:3px 5px;position:absolute;right:10px;top:10px;z-index:8 }
@@ -72,10 +72,10 @@ div.aside-3 li                                           { width:33.3% }
 div.aside-4 li                                           { width:25% }
 div.aside-5 li                                           { width:20% }
 div.aside-6 li                                           { width:16.6% }
-div.aside-7 li                                           { width:14.2% }
-div.aside-8 li                                           { width:12.5% }
-div.aside-9 li                                           { width:11.1% }
-div.aside-10 li                                          { width:10% }
+div.aside-7 li                                           { font-size:33px;width:14.2% }
+div.aside-8 li                                           { font-size:30px;width:12.5% }
+div.aside-9 li                                           { font-size:27px;width:11.1% }
+div.aside-10 li                                          { font-size:24px;width:10% }
 #aside a                                                 { cursor:pointer;display:block;float:left;height:48px;line-height:48px;width:100% }
 #aside a:hover                                           { color:#000000;text-decoration:none }
 #aside i                                                 { margin:0 auto }

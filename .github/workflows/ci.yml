@@ -30,7 +30,7 @@ jobs:
 
       - name: Check minified assets are up to date
         run: |
-          MINIFIED="assets/css/stylesheet.min.css assets/css/syntax-highlighting.min.css assets/js/javascript.min.js"
+          MINIFIED="assets/css/stylesheet.min.css assets/css/highlight-js.min.css assets/js/javascript.min.js assets/js/highlight-js.min.js"
           TRACKED=$(git ls-files $MINIFIED)
           if [ -n "$TRACKED" ] && [ -n "$(git status --porcelain $TRACKED)" ]; then
             echo "::error::Minified assets are out of date. Run 'npx gulp' locally and commit the updated minified files before merging."
