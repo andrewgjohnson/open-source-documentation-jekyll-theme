@@ -61,7 +61,7 @@ plugins:
 | `menu_url` | no | URL for the menu toggle link — if omitted the toggle renders as a `<span>` instead of `<a>` |
 | `keywords` | no | Comma-separated keywords prepended to the auto-generated keywords meta tag |
 | `social_links` | no | Array of social links shown in the aside — each entry has `platform`, `url`, and `label` fields |
-| `nav` | no | Array of navigation links not tied to a page — each entry has `url`, `label`, and `nav_order`. Merged with page-based nav links and sorted together by `nav_order` |
+| `nav` | no | Array of navigation links not tied to a page — each entry has `url`, `nav_text`, and `nav_order`. Merged with page-based nav links and sorted together by `nav_order` |
 | `footer_text` | no | Text displayed in the footer before the copyright notice |
 | `footer_url` | no | Absolute URL that wraps `footer_text` as a link — only used when `footer_text` is also set |
 | `copyright_year_start` | no | Four-digit year the project was first released (e.g. `2013`) — when set and different from the current year, renders as a year range |
@@ -93,10 +93,10 @@ Extra links (typically external) that appear in the main navigation alongside pa
 ```yaml
 nav:
   - url:       https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme
-    label:     GitHub
+    nav_text:  GitHub
     nav_order: 101
   - url:       https://example.com/changelog/
-    label:     Changelog
+    nav_text:  Changelog
     nav_order: 102
 ```
 
