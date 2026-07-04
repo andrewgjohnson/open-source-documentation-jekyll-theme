@@ -3,8 +3,8 @@
 [![MIT License](https://img.shields.io/badge/license-MIT-0366d6.png?colorB=0366d6&style=flat-square)](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/blob/main/LICENSE)
 [![Current Release](https://img.shields.io/github/release/andrewgjohnson/open-source-documentation-jekyll-theme.png?colorB=0366d6&style=flat-square&logoColor=white&logo=github)](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/releases)
 [![Issues](https://img.shields.io/github/issues/andrewgjohnson/open-source-documentation-jekyll-theme.png?colorB=0366d6&style=flat-square&logoColor=white&logo=github)](https://github.com/andrewgjohnson/open-source-documentation-jekyll-theme/issues)
-[![Installs](assets/images/installs-badge.png)](INSTALLS.md)
 [![RubyGems Downloads](https://img.shields.io/gem/dt/open-source-documentation-jekyll-theme.png?colorB=0366d6&style=flat-square&logoColor=white&logo=rubygems)](https://rubygems.org/gems/open-source-documentation-jekyll-theme)
+[![Installs](assets/images/installs-badge.png)](INSTALLS.md)
 [![Patreon](assets/images/patreon-badge.png)](https://patreon.com/agjopensource)
 
 <p align="center">
